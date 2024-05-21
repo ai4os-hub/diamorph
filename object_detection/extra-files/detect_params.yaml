@@ -1,0 +1,24 @@
+imgsz : 512
+conf_thres : 0.4
+source: rotate_yolov5/data/images/real
+iou_thres: 0.4
+hide_labels: ""
+agnostic_nms: False
+classes : ""
+max_det : 1000
+# device
+# view_img
+# save_txt
+# save_conf
+# save_crop
+# nosave
+# classes
+# agnostic_nms
+# augment
+# update
+# project
+# name
+# exist_ok
+# line_thickness
+# hide_labels
+# hide_conf

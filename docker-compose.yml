@@ -1,0 +1,59 @@
+services:
+  classif:
+    build: 
+      context: ./diamorph_image
+
+    image: diamorph:latest
+    env_file:
+      - .env
+    user: "${DOCKER_COMPOSE_UID}:${DOCKER_COMPOSE_GID}"
+    restart: ${RESTART_SERVICES}
+    container_name : classif
+    expose:
+      - ${PORT_CLASS_INF}
+      - ${PORT_CLASS_MAN}
+      - ${PORT_CLASS_MET}
+    volumes:
+      - ./classification/model-store:/home/model-server/model-store # directory
+      - ./classification/best_model/best_model.tjm:/home/model-server/best_model.tjm # file
+      - ./classification/best_model/index_to_name.json:/home/model-server/index_to_name.json # file
+      - ./classification/handler.py:/home/model-server/handler.py # file
+      - ./classification/BRG_AAMB_10002.png:/home/model-server/BRG_AAMB_10002.png # file
+    command: ["classif"]
+
+  objectDetection:
+    image: diamorph:latest
+    user: "${DOCKER_COMPOSE_UID}:${DOCKER_COMPOSE_GID}"
+    env_file:
+      - .env
+    restart: always
+    container_name : objectDetection
+    expose:
+      - ${PORT_OD_INF}
+      - ${PORT_OD_MAN}
+      - ${PORT_OD_MET}
+    volumes:
+      - ./object_detection/model-store:/home/model-server/model-store # directory
+      - ./object_detection/best_model/best_model.pt:/home/model-server/best_model.pt # fichier
+      - ./object_detection/handler.py:/home/model-server/handler.py # fichier
+      - ./object_detection/extra-files:/home/model-server/extra-files # directory
+    command: ["objectDetection"]
+    depends_on:
+      - classif
+
+  client:
+    image: diamorph:latest
+    user: "${DOCKER_COMPOSE_UID}:${DOCKER_COMPOSE_GID}"
+    env_file:
+      - .env
+    restart: always
+    container_name : client
+    ports:
+      - ${LISTEN_ITF}:${LOCAL_PORT}:${PORT_CLIENT}
+    volumes:
+      - ./client/main.py:/home/model-server/main.py
+      - ./client/st_button.py:/home/model-server/st_button.py
+      - ./client/client_request.py:/home/model-server/client_request.py
+    command: ["client"]
+    depends_on:
+      - objectDetection
