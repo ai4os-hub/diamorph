@@ -147,7 +147,7 @@ tifffile==2022.5.4
 tinycss2==1.1.1
 toml==0.10.2
 toolz==0.11.2
-torch==1.10.0
+torch==2.2.0
 torch-model-archiver==0.5.3
 torchinfo==1.6.3
 torchmetrics==0.7.2
